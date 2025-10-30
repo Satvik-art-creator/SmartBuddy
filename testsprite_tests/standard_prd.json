@@ -1,0 +1,451 @@
+{
+  "meta": {
+    "project": "SmartBuddy Campus Companion",
+    "date": "2025-10-20",
+    "prepared_by": "Software Development Manager"
+  },
+  "product_overview": "SmartBuddy is an AI-powered campus companion web app designed for the IIIT Nagpur community to boost student productivity, collaboration, and mental wellness through personalized study buddy matches, event recommendations, and wellness tips, all integrated with a gamification system.",
+  "core_goals": [
+    "Secure user registration, login, and profile management with JWT authentication",
+    "Provide personalized study buddy matches based on shared skills and interests",
+    "Recommend relevant campus events tailored to user interests",
+    "Deliver daily wellness tips customized to user's mood",
+    "Implement a gamification system to encourage user engagement and participation",
+    "Ensure a modern, responsive, and friendly user interface accessible on all devices"
+  ],
+  "key_features": [
+    "User Registration and Login with secure password hashing and JWT token issuance",
+    "Profile management allowing updates to skills, interests, and viewing points",
+    "Study Buddy Matching API that returns top 3 compatible study partners based on shared skills and interests",
+    "Event Recommendation API filtering events by user interests and sorting by date/time",
+    "Event Creation API for admins to add new campus events",
+    "Wellness Tips API providing mood-based tips and Wellness Check-in API recording mood and awarding points",
+    "Gamification with points awarded for wellness check-ins, event participation, and connecting with buddies",
+    "Dashboard presenting greeting, study buddy matches, event recommendations, wellness tips, and points summary",
+    "Mobile-first, card-based responsive UI with accessible navigation and a friendly color scheme"
+  ],
+  "user_flow_summary": [
+    "User registers by providing name, email, password, skills, and interests and receives a JWT token",
+    "User logs in with email and password to access the personalized dashboard",
+    "Dashboard displays top 3 study buddy matches, relevant events, a wellness tip based on mood, and current user points",
+    "User can update their profile including name, skills, and interests",
+    "User can view and connect with recommended study buddies",
+    "Admin users can create new events specifying title, date, time, location, tags, and description",
+    "User views personalized event recommendations sorted by date/time",
+    "User selects their mood via wellness check-in, receives a tip, and earns gamification points",
+    "Points are tracked and displayed on the profile and dashboard to encourage engagement"
+  ],
+  "validation_criteria": [
+    "User registration requires unique email and meets password security standards",
+    "JWT authentication is enforced on protected endpoints",
+    "Personalized study buddy matchmaking returns the correct top 3 matches based on defined scoring algorithm",
+    "Event recommendations correctly filter and sort events relevant to user interests",
+    "Wellness tips accurately respond to the mood selected and points are correctly added on check-in",
+    "Profiles can be updated and changes persist correctly in the database",
+    "Admin privileges restrict event creation to authorized users only",
+    "Frontend is fully responsive, user-friendly, and consistent with the design theme",
+    "APIs return appropriate HTTP status codes and handle errors gracefully",
+    "Code follows modular structure facilitating future AI/ML integration and maintenance"
+  ],
+  "code_summary": {
+    "tech_stack": [
+      "JavaScript",
+      "Node.js",
+      "Express",
+      "MongoDB",
+      "Mongoose",
+      "JWT",
+      "bcryptjs",
+      "CORS"
+    ],
+    "features": [
+      {
+        "name": "User Registration API",
+        "description": "Register a new user with name, email, password, skills, and interests. Returns JWT token and user details.",
+        "files": [
+          "backend/routes/auth.js",
+          "backend/models/User.js",
+          "backend/middleware/authMiddleware.js"
+        ],
+        "api_doc": {
+          "paths": {
+            "/api/auth/register": {
+              "post": {
+                "summary": "Register a new user",
+                "tags": [
+                  "Authentication"
+                ],
+                "requestBody": {
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "required": [
+                          "name",
+                          "email",
+                          "password"
+                        ],
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string",
+                            "format": "email"
+                          },
+                          "password": {
+                            "type": "string",
+                            "minLength": 6
+                          },
+                          "skills": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "interests": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "201": {
+                    "description": "User registered successfully"
+                  },
+                  "400": {
+                    "description": "User already exists"
+                  },
+                  "500": {
+                    "description": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "User Login API",
+        "description": "Authenticate user with email and password. Returns JWT token and user details.",
+        "files": [
+          "backend/routes/auth.js",
+          "backend/models/User.js"
+        ],
+        "api_doc": {
+          "paths": {
+            "/api/auth/login": {
+              "post": {
+                "summary": "Login user",
+                "tags": [
+                  "Authentication"
+                ],
+                "requestBody": {
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "required": [
+                          "email",
+                          "password"
+                        ],
+                        "properties": {
+                          "email": {
+                            "type": "string",
+                            "format": "email"
+                          },
+                          "password": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "200": {
+                    "description": "Login successful"
+                  },
+                  "401": {
+                    "description": "Invalid credentials"
+                  },
+                  "500": {
+                    "description": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Get Recommended Events API",
+        "description": "Get event recommendations based on user interests. Requires authentication.",
+        "files": [
+          "backend/routes/events.js",
+          "backend/models/Event.js",
+          "backend/middleware/authMiddleware.js"
+        ],
+        "api_doc": {
+          "paths": {
+            "/api/events": {
+              "get": {
+                "summary": "Get recommended events",
+                "tags": [
+                  "Events"
+                ],
+                "security": [
+                  {
+                    "BearerAuth": []
+                  }
+                ],
+                "responses": {
+                  "200": {
+                    "description": "List of recommended events"
+                  },
+                  "401": {
+                    "description": "Unauthorized"
+                  },
+                  "500": {
+                    "description": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Create Event API",
+        "description": "Create a new event with title, date, time, location, tags, and description. Requires authentication.",
+        "files": [
+          "backend/routes/events.js",
+          "backend/models/Event.js",
+          "backend/middleware/authMiddleware.js"
+        ],
+        "api_doc": {
+          "paths": {
+            "/api/events": {
+              "post": {
+                "summary": "Create a new event",
+                "tags": [
+                  "Events"
+                ],
+                "security": [
+                  {
+                    "BearerAuth": []
+                  }
+                ],
+                "requestBody": {
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "required": [
+                          "title",
+                          "date",
+                          "time",
+                          "location",
+                          "tags"
+                        ],
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          },
+                          "date": {
+                            "type": "string"
+                          },
+                          "time": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          },
+                          "tags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "description": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "201": {
+                    "description": "Event created successfully"
+                  },
+                  "401": {
+                    "description": "Unauthorized"
+                  },
+                  "500": {
+                    "description": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Get Wellness Tip API",
+        "description": "Get a wellness tip based on user's mood. Requires authentication.",
+        "files": [
+          "backend/routes/wellness.js",
+          "backend/middleware/authMiddleware.js"
+        ],
+        "api_doc": {
+          "paths": {
+            "/api/wellness": {
+              "get": {
+                "summary": "Get wellness tip",
+                "tags": [
+                  "Wellness"
+                ],
+                "security": [
+                  {
+                    "BearerAuth": []
+                  }
+                ],
+                "parameters": [
+                  {
+                    "name": "mood",
+                    "in": "query",
+                    "description": "User's current mood",
+                    "schema": {
+                      "type": "string",
+                      "enum": [
+                        "Happy",
+                        "Neutral",
+                        "Stressed"
+                      ]
+                    }
+                  }
+                ],
+                "responses": {
+                  "200": {
+                    "description": "Wellness tip returned"
+                  },
+                  "401": {
+                    "description": "Unauthorized"
+                  },
+                  "500": {
+                    "description": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Wellness Check-in API",
+        "description": "Record user check-in with mood and tip, adds points. Requires authentication.",
+        "files": [
+          "backend/routes/wellness.js",
+          "backend/models/User.js",
+          "backend/middleware/authMiddleware.js"
+        ],
+        "api_doc": {
+          "paths": {
+            "/api/wellness/checkin": {
+              "post": {
+                "summary": "Record wellness check-in",
+                "tags": [
+                  "Wellness"
+                ],
+                "security": [
+                  {
+                    "BearerAuth": []
+                  }
+                ],
+                "requestBody": {
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "required": [
+                          "mood",
+                          "tip"
+                        ],
+                        "properties": {
+                          "mood": {
+                            "type": "string"
+                          },
+                          "tip": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "200": {
+                    "description": "Check-in successful"
+                  },
+                  "401": {
+                    "description": "Unauthorized"
+                  },
+                  "500": {
+                    "description": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Get Study Buddy Matches API",
+        "description": "Get top 3 study buddy matches based on shared skills and interests. Requires authentication.",
+        "files": [
+          "backend/routes/match.js",
+          "backend/models/User.js",
+          "backend/middleware/authMiddleware.js"
+        ],
+        "api_doc": {
+          "paths": {
+            "/api/match": {
+              "get": {
+                "summary": "Get study buddy matches",
+                "tags": [
+                  "Matching"
+                ],
+                "security": [
+                  {
+                    "BearerAuth": []
+                  }
+                ],
+                "responses": {
+                  "200": {
+                    "description": "List of top matches"
+                  },
+                  "401": {
+                    "description": "Unauthorized"
+                  },
+                  "500": {
+                    "description": "Server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

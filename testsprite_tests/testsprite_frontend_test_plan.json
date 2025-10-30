@@ -1,0 +1,394 @@
+[
+  {
+    "id": "TC001",
+    "title": "User Registration Success",
+    "description": "Verify that a user can register successfully with valid name, unique email, password, skills, and interests, and receives a JWT token.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/auth/register with valid name, unique email, password (min 6 chars), skills, and interests."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 201 Created."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response contains user details and a valid JWT token."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is persisted in the database with correct details."
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "User Registration Failure - Duplicate Email",
+    "description": "Ensure registration fails when using an already registered email.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/auth/register with an email already in use."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 400 Bad Request."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify error message indicates the user already exists."
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "User Login Success",
+    "description": "Verify a registered user can login successfully using valid email and password and receive a JWT token.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/auth/login with valid email and password."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 200 OK."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response contains user details and a valid JWT token."
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "User Login Failure - Invalid Credentials",
+    "description": "Verify login fails with incorrect email or password.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/auth/login with incorrect email or password."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 401 Unauthorized."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify error message indicates invalid credentials."
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "JWT Authentication Enforcement",
+    "description": "Verify protected endpoints reject requests without valid JWT token.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send request to protected APIs (/api/events, /api/match, /api/wellness) without Authorization header."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 401 Unauthorized."
+      },
+      {
+        "type": "action",
+        "description": "Send request with malformed or expired JWT token."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 401 Unauthorized."
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Profile Update Success",
+    "description": "Verify a user can update their profile (name, skills, interests) and changes persist.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send PATCH or PUT request to profile update endpoint with new name, skills, or interests along with a valid JWT token."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 200 OK."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response data reflects updated fields."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the database stores the updated profile data."
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Get Study Buddy Matches - Valid Response",
+    "description": "Verify that /api/match returns top 3 study buddy matches based on shared skills and interests for authenticated users.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send GET request to /api/match with valid JWT token."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 200 OK."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response includes up to 3 user profiles ranked by compatibility based on overlapping skills and interests."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no duplicate or unrelated users appear in the results."
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Event Recommendations - Filter and Sort",
+    "description": "Verify /api/events returns events filtered by user interests and sorted by date and time.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send GET request to /api/events with valid JWT token."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 200 OK."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify events are filtered to match the user's interests."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify events are sorted ascending by date and time."
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Event Creation by Admin - Success",
+    "description": "Verify that admin users can create new campus events with required details.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/events with valid event data and JWT token of an admin user."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 201 Created."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response includes details of the created event."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify event is saved correctly in the database."
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Event Creation by Non-Admin - Unauthorized",
+    "description": "Verify event creation fails when a non-admin user attempts it.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/events with valid event data and JWT token of a non-admin user."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 401 Unauthorized or 403 Forbidden."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify event is not created or saved in the database."
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Get Wellness Tip By Mood",
+    "description": "Verify that the wellness tip API returns appropriate tip according to user mood parameter for authenticated users.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send GET request to /api/wellness with mood query parameter (Happy, Neutral, Stressed) and valid JWT token."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 200 OK."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the wellness tip content corresponds to the mood provided."
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Wellness Check-in Success and Point Awarding",
+    "description": "Verify wellness check-in records mood and tip, awards gamification points, and persisting changes.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/wellness/checkin with mood and tip in request body and valid JWT token."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 200 OK."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify points are correctly added to the user's profile."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the wellness check-in data is stored correctly in the database."
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Dashboard Data Consistency",
+    "description": "Verify dashboard displays correct greeting, study buddy matches, event recommendations, wellness tip, and points summary for logged in users.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login with valid user credentials and access the dashboard."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify greeting displays user's name or appropriate message."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify study buddy matches are up to 3 and based on shared interests/skills."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify event recommendations match user interests and are sorted by date/time."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the wellness tip matches the last check-in mood or default if no check-in."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify points summary reflects total accumulated points correctly."
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "API Error Handling - Server Errors",
+    "description": "Verify all APIs return appropriate HTTP 500 status and error messages when server-side errors occur.",
+    "category": "error handling",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Simulate backend server errors (e.g. DB failure) on various endpoints (/api/auth/register, /api/match, /api/events)."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that responses return HTTP status 500 Internal Server Error."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that response contains meaningful error messages without sensitive info."
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "UI Responsiveness on Different Devices",
+    "description": "Verify the frontend UI renders properly and is fully functional on diverse screen sizes, maintaining accessibility and color scheme consistency.",
+    "category": "ui",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open the application dashboard and pages on mobile, tablet, and desktop screen sizes."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify UI layout is responsive with appropriate card-based design adjustments."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify navigation is accessible and user friendly on all tested devices."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify color schemes follow the design theme and have sufficient contrast for accessibility."
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Invalid Input Handling in Registration",
+    "description": "Verify that registration fails with invalid inputs (short password, malformed email, missing required fields).",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/auth/register with password less than 6 characters."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 400 Bad Request with descriptive error."
+      },
+      {
+        "type": "action",
+        "description": "Send POST request with malformed email format."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 400 Bad Request with validation error."
+      },
+      {
+        "type": "action",
+        "description": "Send POST request missing mandatory fields like name or email."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 400 Bad Request with details of missing fields."
+      }
+    ]
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "status": "commited",
+  "type": "backend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:5000",
+  "backendAuthType": "basic token",
+  "backendUsername": "demo@smartbuddy.com",
+  "backendPassword": "Demo123!",
+  "executionArgs": {
+    "projectName": "Smart Buddy Final",
+    "projectPath": "C:\\Users\\Prithvi chouhan\\OneDrive\\Desktop\\Smart Buddy Final",
+    "testIds": [],
+    "additionalInstruction": "",
+    "envs": {
+      "API_KEY": "sk-user-M1rX3aw9RZ93KL3zDaAEEUM3JFl8lbUILqit-S0hnGdG-Mv3TuU_EijBSRVRb5JHBsrh9U4VU3CdBl98Q3Ek0JQ0LKXOxUzUjcv_0HA7QR4nt8cW5kBWA_sY0-gaVErbZCw"
+    }
+  }
+}

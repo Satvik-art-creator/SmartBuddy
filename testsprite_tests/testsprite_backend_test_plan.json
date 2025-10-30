@@ -1,0 +1,37 @@
+[
+  {
+    "id": "TC001",
+    "title": "user registration with unique email and valid password",
+    "description": "Test the user registration API to ensure it successfully registers a new user with a unique email and a password that meets security standards, returning a JWT token and user details."
+  },
+  {
+    "id": "TC002",
+    "title": "user login with valid credentials",
+    "description": "Test the user login API to verify that a user can authenticate with valid email and password, receiving a JWT token and user details upon successful login."
+  },
+  {
+    "id": "TC003",
+    "title": "get recommended events with authentication",
+    "description": "Test the get recommended events API to ensure it returns a list of events filtered by user interests and sorted by date/time, only accessible with valid JWT authentication."
+  },
+  {
+    "id": "TC004",
+    "title": "create event with admin authorization",
+    "description": "Test the create event API to verify that only authenticated admin users can create new events with required fields such as title, date, time, location, and tags."
+  },
+  {
+    "id": "TC005",
+    "title": "get wellness tip based on mood with authentication",
+    "description": "Test the wellness tip API to ensure it returns an appropriate wellness tip based on the user's mood parameter, accessible only with valid JWT authentication."
+  },
+  {
+    "id": "TC006",
+    "title": "record wellness checkin and award points",
+    "description": "Test the wellness check-in API to verify that it records the user's mood and tip, updates the user's points accordingly, and requires valid JWT authentication."
+  },
+  {
+    "id": "TC007",
+    "title": "get top three study buddy matches with authentication",
+    "description": "Test the study buddy matching API to ensure it returns the top 3 compatible study partners based on shared skills and interests, accessible only with valid JWT authentication."
+  }
+]
