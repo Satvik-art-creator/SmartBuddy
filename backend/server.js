@@ -11,13 +11,28 @@ const User = require("./models/User");
 const Conversation = require("./models/Conversation");
 const Message = require("./models/Message");
 
+// Debug: Log environment variables (without sensitive data)
+console.log('🔍 Environment Check:');
+console.log('- MONGODB_URI:', process.env.MONGODB_URI ? '✅ Set (hidden)' : '❌ NOT SET');
+console.log('- JWT_SECRET:', process.env.JWT_SECRET ? '✅ Set (hidden)' : '❌ NOT SET');
+console.log('- PORT:', process.env.PORT || '5000 (default)');
+console.log('- FRONTEND_URL:', process.env.FRONTEND_URL || 'http://localhost:3000 (default)');
+
 // Validate required environment variables
 const requiredEnvVars = ['MONGODB_URI', 'JWT_SECRET'];
 const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
 
 if (missingVars.length > 0) {
-  console.error('❌ Missing required environment variables:', missingVars.join(', '));
-  console.error('Please set these in your Render dashboard Environment section');
+  console.error('\n❌ FATAL ERROR: Missing required environment variables:', missingVars.join(', '));
+  console.error('\n📝 HOW TO FIX:');
+  console.error('1. Go to Render Dashboard → Your Service → Environment tab');
+  console.error('2. Click "Add Environment Variable"');
+  console.error('3. Add these variables:');
+  missingVars.forEach(varName => {
+    console.error(`   - ${varName}=<your-value>`);
+  });
+  console.error('4. Click "Save Changes"');
+  console.error('5. Render will automatically redeploy\n');
   process.exit(1);
 }
 
