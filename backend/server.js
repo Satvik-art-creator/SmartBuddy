@@ -10,10 +10,20 @@ const jwt = require("jsonwebtoken");
 const User = require("./models/User");
 const Conversation = require("./models/Conversation");
 const Message = require("./models/Message");
-const JWT_SECRET = process.env.JWT_SECRET;
-const { setIO, getUserSocketMap } = require("./socket");
 
-// console.log('JWT loaded:', process.env.JWT_SECRET);
+// Validate required environment variables
+const requiredEnvVars = ['MONGODB_URI', 'JWT_SECRET'];
+const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingVars.length > 0) {
+  console.error('❌ Missing required environment variables:', missingVars.join(', '));
+  console.error('Please set these in your Render dashboard Environment section');
+  process.exit(1);
+}
+
+const JWT_SECRET = process.env.JWT_SECRET;
+const MONGODB_URI = process.env.MONGODB_URI;
+const { setIO, getUserSocketMap } = require("./socket");
 
 const app = express();
 
@@ -61,13 +71,22 @@ app.use("/api/conversations", require("./routes/conversations"));
 app.use("/api/profile", require("./routes/profile"));
 
 // MongoDB Connection
+if (!MONGODB_URI) {
+  console.error("❌ MONGODB_URI is not defined. Please set it in your environment variables.");
+  process.exit(1);
+}
+
 mongoose
-  .connect(process.env.MONGODB_URI, {
+  .connect(MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
+  .catch((err) => {
+    console.error("❌ MongoDB Connection Error:", err);
+    console.error("Please check your MONGODB_URI in Render environment variables");
+    process.exit(1);
+  });
 
 // Set up server and Socket.IO
 const httpServer = http.createServer(app);
