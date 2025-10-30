@@ -30,3 +30,7 @@ yarn-error.log*
 # Documentation
 *.md
 
+# Testing
+testsprite_tests/
+/testsprite_tests
+
